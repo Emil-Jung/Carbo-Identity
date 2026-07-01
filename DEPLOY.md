@@ -47,6 +47,15 @@ nano .env
 
 Generate a pepper: `python3 -c "import secrets;print(secrets.token_urlsafe(48))"`
 
+Or generate **pepper + carbo_user passphrase** and write `.env` in one step:
+
+```bash
+cd identity_api
+python3 generate_env_secrets.py
+# Saves .env and prints User ID + password — store them safely (Teams/USB/note).
+# Preview only: python3 generate_env_secrets.py --print-only
+```
+
 ## 4. Seed roles + bootstrap admin
 
 ```bash

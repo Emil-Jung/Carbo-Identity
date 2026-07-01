@@ -45,10 +45,13 @@ bash bootstrap_on_server.sh
 
 cp .env.example .env
 nano .env
+# OR auto-generate pepper + carbo_user passphrase:
+#   python3 generate_env_secrets.py
 # Set IDENTITY_SECRET_PEPPER (long random string). Save.
+# Optional: BOOTSTRAP_ADMIN_LOGIN=carbo_user and BOOTSTRAP_ADMIN_PASSWORD=... (User ID, not email)
 
 .venv/bin/python seed_identity.py
-# SAVE THE PRINTED ADMIN PASSWORD (shown once).
+# SAVE THE PRINTED PASSWORD for carbo_user (shown once if password not set in .env).
 
 bash install_service_on_server.sh
 # Installs systemd unit, starts carbo-identity on 127.0.0.1:8004
@@ -107,6 +110,6 @@ curl -s https://bkweb3.bigk.co.uk/cis/app/version.json
 # =============================================================================
 #
 # 1. Install CarboCIS-Setup.exe on a PC (or use existing test install).
-# 2. Login as admin (password from seed_identity.py).
+# 2. Login as carbo_user (password from seed_identity.py).
 # 3. Identity Admin → create Simon (operations), Juliana (finance).
 # 4. CIS shows correct modules per user.
