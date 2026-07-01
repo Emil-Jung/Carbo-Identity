@@ -6,6 +6,7 @@ outage does not immediately drop active sessions.
 """
 
 from fastapi import APIRouter, Depends, Header, HTTPException
+from pydantic import BaseModel
 
 from app import db
 from app.deps.auth import get_current_user
@@ -14,10 +15,15 @@ from app.services import auth as auth_svc
 router = APIRouter()
 
 
+class LoginRequest(BaseModel):
+    login_id: str
+    password: str
+
+
 @router.post("/auth/login")
-def login(body: dict):
-    login_id = (body.get("login_id") or "").strip()
-    password = body.get("password") or ""
+def login(body: LoginRequest):
+    login_id = (body.login_id or "").strip()
+    password = body.password or ""
     if not login_id or not password:
         raise HTTPException(status_code=400, detail="login_id and password required")
     conn = db.get_connection()
