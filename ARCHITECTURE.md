@@ -17,8 +17,8 @@ through **carbo-identity**. The two never mix.
 
 ```
                          ┌─────────────────────────┐
-   Manager's browser ──▶ │  CIS shell  (/cis/)      │  one URL, one login
-                         │  static HTML/JS          │
+   Installed CIS app ──▶ │  CIS desktop shell       │  one login, per-PC install,
+   (PySide6 + web view)  │  hosts web modules       │  auto-updates from server
                          └───────────┬──────────────┘
                                      │ 1) POST /identity/api/auth/login
                                      │ 2) GET  /identity/api/auth/me  (permissions)
@@ -35,7 +35,9 @@ through **carbo-identity**. The two never mix.
 
 - **carbo-identity** owns *who* people are and *what* they may see.
 - **Domain APIs** own their data. They do not store users.
-- **CIS shell** is a thin, permission-gated launcher of modules.
+- **CIS app** is a thin, installed, permission-gated launcher of modules that
+  auto-updates from the server (`/cis/app/version.json`). It bundles the web
+  modules, so adding a module later ships to every PC via the normal update.
 
 ## Permission model (RBAC)
 
