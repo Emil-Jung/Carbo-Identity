@@ -1,0 +1,17 @@
+# systemd unit for carbo-identity
+# Install:  sudo cp carbo-identity.service /etc/systemd/system/
+#           sudo systemctl daemon-reload && sudo systemctl enable --now carbo-identity
+[Unit]
+Description=Carbo Identity API (auth & permissions)
+After=network.target postgresql.service
+
+[Service]
+User=bkweb3dev
+WorkingDirectory=/opt/carbo/carbo-identity/identity_api
+EnvironmentFile=/opt/carbo/carbo-identity/identity_api/.env
+ExecStart=/opt/carbo/carbo-identity/identity_api/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8003
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
