@@ -18,7 +18,7 @@ through **carbo-identity**. The two never mix.
 ```
                          ┌─────────────────────────┐
    Installed CIS app ──▶ │  CIS desktop shell       │  one login, per-PC install,
-   (PySide6 + web view)  │  hosts web modules       │  auto-updates from server
+   (WebView2/pywebview)  │  hosts web modules       │  auto-updates via installer
                          └───────────┬──────────────┘
                                      │ 1) POST /identity/api/auth/login
                                      │ 2) GET  /identity/api/auth/me  (permissions)
