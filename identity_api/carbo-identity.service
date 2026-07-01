@@ -9,7 +9,7 @@ After=network.target postgresql.service
 User=bkweb3dev
 WorkingDirectory=/opt/carbo/carbo-identity/identity_api
 EnvironmentFile=/opt/carbo/carbo-identity/identity_api/.env
-ExecStart=/opt/carbo/carbo-identity/identity_api/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8003
+ExecStart=/opt/carbo/carbo-identity/identity_api/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8004
 Restart=on-failure
 RestartSec=3
 

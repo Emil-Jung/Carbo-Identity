@@ -24,7 +24,7 @@ through **carbo-identity**. The two never mix.
                                      │ 2) GET  /identity/api/auth/me  (permissions)
                                      ▼
                          ┌─────────────────────────┐
-                         │  carbo-identity  :8003   │  users, roles, permissions,
+                         │  carbo-identity  :8004   │  users, roles, permissions,
                          │  own DB: carbo_identity  │  sessions (token hashes)
                          └───────────┬──────────────┘
                                      ▲  introspection (GET /auth/me + bearer)
@@ -80,7 +80,7 @@ crafted request can't bypass the shell. Drop-in dependency for the maintenance A
 import time, urllib.request, json
 from fastapi import Header, HTTPException
 
-IDENTITY_URL = "http://127.0.0.1:8003/auth/me"
+IDENTITY_URL = "http://127.0.0.1:8004/auth/me"
 _cache = {}  # token -> (expiry_ts, user)
 
 def _introspect(token: str) -> dict | None:

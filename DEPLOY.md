@@ -9,9 +9,11 @@ database with maintenance or quality.
 | Thing            | Value                                         |
 |------------------|-----------------------------------------------|
 | Code dir         | `/opt/carbo/carbo-identity`                    |
-| Service (uvicorn)| `127.0.0.1:8003`, systemd unit `carbo-identity`|
+| Service (uvicorn)| `127.0.0.1:8004`, systemd unit `carbo-identity`|
 | Public API       | `https://bkweb3.bigk.co.uk/identity/api/`      |
 | Database         | `carbo_identity` (Postgres, peer/local)        |
+
+**Big-K port map:** 8001 maintenance, 8002 quality, 8003 producers, **8004 identity** (8003 was already taken).
 
 ## 1. Get the code on the server
 
@@ -60,7 +62,7 @@ sudo cp carbo-identity.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable --now carbo-identity
 sudo systemctl status carbo-identity
-curl -s http://127.0.0.1:8003/health
+curl -s http://127.0.0.1:8004/health
 ```
 
 ## 6. Nginx

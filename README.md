@@ -72,7 +72,7 @@ python -m venv .venv && .venv\Scripts\pip install -r requirements.txt   # Window
 set IDENTITY_SECRET_PEPPER=dev-pepper
 set DATABASE_URL=postgresql://postgres:password@localhost:5432/carbo_identity
 .venv\Scripts\python seed_identity.py
-.venv\Scripts\uvicorn app.main:app --port 8003
+.venv\Scripts\uvicorn app.main:app --port 8004
 ```
 
-Then browse `http://localhost:8003/docs`.
+Then browse `http://localhost:8004/docs`.
