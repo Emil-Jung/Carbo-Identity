@@ -32,13 +32,13 @@ PERMISSION_CATALOG: list[dict] = [
 
     {"key": "maintenance.manager", "label": "Maintenance (desktop app)", "module": "maintenance_manager", "section": "Applications"},
 
+    {"key": "traceability.stock.view", "label": "Carbo Big-K Bag Stock", "module": "bag_stock", "section": "Applications"},
+
     {"key": "producers.view", "label": "View Producers", "module": "producers_view", "section": "Reports & lookups"},
 
     {"key": "quality.view", "label": "Quality Analysis", "module": "quality_view", "section": "Reports & lookups"},
 
-    {"key": "traceability.stock.view", "label": "Big-K bag stock", "module": "bag_stock", "section": "Reports & lookups"},
-
-    {"key": "maintenance.ops.view", "label": "Maintenance — Operations", "module": "maintenance_ops", "section": "Reports & lookups"},
+    {"key": "maintenance.ops.view", "label": "Fleet Status", "module": "maintenance_ops", "section": "Reports & lookups"},
 
     {"key": "maintenance.fuel.view", "label": "Consumption (diesel / fuel)", "module": "consumption", "section": "Reports & lookups"},
 
