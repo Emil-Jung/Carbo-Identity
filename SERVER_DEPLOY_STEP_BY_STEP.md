@@ -187,16 +187,43 @@ Must show JSON: `{"status":"ok","service":"carbo-identity"}`
 
 ---
 
-## Step 10 — Public login test (browser)
+## Step 10 — Login test (on the server)
 
-Open: https://bkweb3.bigk.co.uk/identity/api/docs  
+**Do not** `curl https://bkweb3.bigk.co.uk/...` **from the server itself.**  
+That hostname resolves to the machine’s public address; the packet leaves the box and often **never comes back** (no NAT hairpin). It will hang until you Ctrl+C. This is normal — not a broken API.
 
-1. **POST /auth/login** → Try it out  
-2. Body: `{"login_id":"carbo_user","password":"YOUR_PASSWORD_FROM_STEP_4"}`  
-3. Execute → must return `"token"`
+You already proved the **public** path in Step 9 (health in a **browser on your PC**).  
+Step 10 only confirms login on localhost (same as Step 8, quick re-check):
 
-**Verify:** `"token"` in response.  
-Then identity deploy is **complete**.
+```bash
+cd /opt/carbo/carbo-identity/identity_api
+.venv/bin/python - <<'PY'
+import json, os, urllib.request
+from dotenv import load_dotenv
+load_dotenv(".env")
+body = json.dumps({
+    "login_id": os.environ.get("BOOTSTRAP_ADMIN_LOGIN", "carbo_user"),
+    "password": os.environ["BOOTSTRAP_ADMIN_PASSWORD"],
+}).encode()
+req = urllib.request.Request("http://127.0.0.1:8004/auth/login", data=body,
+    headers={"Content-Type": "application/json"}, method="POST")
+print(urllib.request.urlopen(req, timeout=10).read().decode())
+PY
+```
+
+**Verify:** output contains `"token"`.  
+Optional — login **through nginx** without leaving the server (uses `127.0.0.1`, not the public hostname):
+
+```bash
+PASSWORD=$(grep '^BOOTSTRAP_ADMIN_PASSWORD=' .env | cut -d= -f2-)
+curl -s --max-time 5 -k \
+  -H 'Host: bkweb3.bigk.co.uk' \
+  -X POST https://127.0.0.1/identity/api/auth/login \
+  -H 'Content-Type: application/json' \
+  -d "{\"login_id\":\"carbo_user\",\"password\":\"$PASSWORD\"}"
+```
+
+Then identity deploy is **complete**. Public HTTPS login is already covered by Step 9 + CIS later.
 
 ---
 

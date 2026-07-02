@@ -11,11 +11,13 @@ from __future__ import annotations
 # (key, human label, which CIS module it unlocks)
 PERMISSION_CATALOG: list[dict] = [
     {"key": "identity.admin", "label": "Identity administration (users, roles)", "module": "identity_admin"},
+    {"key": "maintenance.manager", "label": "Maintenance — Manager desktop app", "module": "maintenance_manager"},
     {"key": "maintenance.ops.view", "label": "Maintenance — Operations view", "module": "maintenance_ops"},
     {"key": "maintenance.fuel.view", "label": "Maintenance — Consumption (fuel numbers)", "module": "consumption"},
-    # Future modules (declared early so roles can be prepared):
     {"key": "maintenance.certs.view", "label": "Maintenance — Certificates & licenses", "module": "maintenance_ops"},
+    {"key": "quality.capture", "label": "Quality — Sieving Sheet capture", "module": "quality_capture"},
     {"key": "quality.view", "label": "Quality — Viewer", "module": "quality_view"},
+    {"key": "producers.office", "label": "Producers — Office capture", "module": "producers_office"},
 ]
 
 ALL_PERMISSIONS: set[str] = {p["key"] for p in PERMISSION_CATALOG}
@@ -27,8 +29,14 @@ DEFAULT_ROLES: dict[str, dict] = {
         "permissions": sorted(ALL_PERMISSIONS),
     },
     "operations": {
-        "description": "Operations manager — fleet health + consumption",
-        "permissions": ["maintenance.ops.view", "maintenance.certs.view", "maintenance.fuel.view"],
+        "description": "Operations manager — fleet health + consumption + Manager app",
+        "permissions": [
+            "maintenance.manager",
+            "maintenance.ops.view",
+            "maintenance.certs.view",
+            "maintenance.fuel.view",
+            "quality.capture",
+        ],
     },
     "finance": {
         "description": "Finance manager — consumption numbers only",
@@ -36,7 +44,7 @@ DEFAULT_ROLES: dict[str, dict] = {
     },
     "quality_viewer": {
         "description": "Quality viewer — read-only sieving data (CIS default for staff)",
-        "permissions": ["quality.view"],
+        "permissions": ["quality.view", "quality.capture"],
     },
 }
 

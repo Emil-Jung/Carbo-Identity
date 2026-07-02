@@ -70,18 +70,18 @@ If `nginx -t` fails, fix the typo before reload.
 
 ---
 
-## 5. Verify (browser or short curl)
+## 5. Verify
 
-From the server:
-
-```bash
-curl -s --max-time 5 https://bkweb3.bigk.co.uk/identity/api/health
-```
-
-From your PC browser:
+**From your PC browser** (best — this is the real public path):
 
 - https://bkweb3.bigk.co.uk/identity/api/health
-- https://bkweb3.bigk.co.uk/identity/api/docs  (interactive login test)
+
+**From the server:** do **not** curl the public hostname (often hangs — no NAT hairpin). Use localhost:
+
+```bash
+curl -s --max-time 3 http://127.0.0.1:8004/health
+curl -s --max-time 5 -k -H 'Host: bkweb3.bigk.co.uk' https://127.0.0.1/identity/api/health
+```
 
 ---
 
