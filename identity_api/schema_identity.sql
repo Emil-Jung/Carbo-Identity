@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS users (
     user_id       SERIAL PRIMARY KEY,
     login_id      TEXT NOT NULL UNIQUE,          -- what the person types to log in
     display_name  TEXT NOT NULL,
-    password_hash TEXT NOT NULL,                 -- pbkdf2_sha256$iterations$salt$hash
+    password_hash TEXT,                          -- NULL until first sign-in (invite flow)
+    must_change_password BOOLEAN NOT NULL DEFAULT FALSE,
     status        TEXT NOT NULL DEFAULT 'active',-- active | disabled
     created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     created_by    TEXT,

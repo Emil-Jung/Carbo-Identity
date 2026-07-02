@@ -4,7 +4,7 @@ Generate .env secrets for carbo-identity (first-time server setup).
 
 Creates identity_api/.env from .env.example with:
   - IDENTITY_SECRET_PEPPER  (long random — never share)
-  - BOOTSTRAP_ADMIN_LOGIN   (default carbo_user)
+  - BOOTSTRAP_ADMIN_LOGIN   (default admin)
   - BOOTSTRAP_ADMIN_PASSWORD (random passphrase you can give to staff)
 
 Run on the server after git clone, BEFORE seed_identity.py:
@@ -62,7 +62,7 @@ def build_env_text(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate carbo-identity .env secrets")
-    parser.add_argument("--login", default="carbo_user", help="Bootstrap User ID (default: carbo_user)")
+    parser.add_argument("--login", default="admin", help="Bootstrap User ID (default: admin)")
     parser.add_argument("--force", action="store_true", help="Overwrite existing .env")
     parser.add_argument("--print-only", action="store_true", help="Print values, do not write .env")
     args = parser.parse_args()

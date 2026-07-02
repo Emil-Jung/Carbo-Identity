@@ -11,6 +11,7 @@ from __future__ import annotations
 # (key, human label, which CIS module it unlocks)
 PERMISSION_CATALOG: list[dict] = [
     {"key": "identity.admin", "label": "Identity administration (users, roles)", "module": "identity_admin"},
+    {"key": "identity.device_keys", "label": "Device keys & PWA API access", "module": "device_keys"},
     {"key": "maintenance.manager", "label": "Maintenance — Manager desktop app", "module": "maintenance_manager"},
     {"key": "maintenance.ops.view", "label": "Maintenance — Operations view", "module": "maintenance_ops"},
     {"key": "maintenance.fuel.view", "label": "Maintenance — Consumption (fuel numbers)", "module": "consumption"},

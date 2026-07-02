@@ -56,7 +56,9 @@ def main() -> None:
         role_ids = _ensure_roles(conn)
 
         if users_svc.get_login_credentials(conn, login_id):
-            print(f"Admin user '{login_id}' already exists — leaving it unchanged.")
+            print(f"Admin user '{login_id}' already exists — ensuring admin role.")
+            if users_svc.ensure_user_has_role(conn, login_id, "admin"):
+                print(f"  assigned 'admin' role to '{login_id}'")
         else:
             user = users_svc.create_user(
                 conn, login_id=login_id, display_name="Administrator",

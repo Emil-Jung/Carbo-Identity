@@ -11,7 +11,8 @@ from app.security import hash_password
 # ---- Users -------------------------------------------------------------
 
 def _user_row(row: tuple) -> dict[str, Any]:
-    return {
+    # password_hash at index 7 when present in SELECT; needs_password derived separately
+    base = {
         "user_id": row[0],
         "login_id": row[1],
         "display_name": row[2],
@@ -20,22 +21,47 @@ def _user_row(row: tuple) -> dict[str, Any]:
         "created_by": row[5],
         "last_login_at": row[6].isoformat() if row[6] else None,
     }
+    if len(row) > 7:
+        base["must_change_password"] = bool(row[7])
+    return base
 
 
-_USER_COLS = "user_id, login_id, display_name, status, created_at, created_by, last_login_at"
+def needs_password_setup(password_hash: str | None, must_change_password: bool = False) -> bool:
+    return password_hash is None or bool(must_change_password)
+
+
+_USER_COLS = (
+    "user_id, login_id, display_name, status, created_at, created_by, last_login_at, "
+    "must_change_password"
+)
+_USER_COLS_WITH_HASH = _USER_COLS + ", password_hash"
 
 
 def list_users(conn) -> list[dict]:
     cur = conn.cursor()
     try:
-        cur.execute(f"SELECT {_USER_COLS} FROM users ORDER BY login_id")
-        users = [_user_row(r) for r in cur.fetchall()]
+        cur.execute(f"SELECT {_USER_COLS_WITH_HASH} FROM users ORDER BY login_id")
+        users = []
+        for row in cur.fetchall():
+            user = _user_row(row[:8])
+            user["needs_password"] = needs_password_setup(row[8], user.get("must_change_password", False))
+            users.append(user)
     finally:
         cur.close()
     for u in users:
         u["roles"] = get_user_role_names(conn, u["user_id"])
         u["permissions"] = get_effective_permissions(conn, u["user_id"])
     return users
+
+
+def _fetch_password_hash(conn, user_id: int) -> str | None:
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT password_hash FROM users WHERE user_id = %s", (user_id,))
+        row = cur.fetchone()
+    finally:
+        cur.close()
+    return row[0] if row else None
 
 
 def get_user(conn, user_id: int) -> dict | None:
@@ -48,18 +74,22 @@ def get_user(conn, user_id: int) -> dict | None:
     if not row:
         return None
     user = _user_row(row)
+    pwd_hash = _fetch_password_hash(conn, user_id)
+    user["needs_password"] = needs_password_setup(pwd_hash, user.get("must_change_password", False))
     user["roles"] = get_user_role_names(conn, user_id)
     user["permissions"] = get_effective_permissions(conn, user_id)
     return user
 
 
 def get_login_credentials(conn, login_id: str) -> dict | None:
-    """Return {user_id, login_id, display_name, status, password_hash} or None."""
+    """Return login fields including password_hash (may be NULL for invited users)."""
     cur = conn.cursor()
     try:
         cur.execute(
-            "SELECT user_id, login_id, display_name, status, password_hash "
-            "FROM users WHERE lower(login_id) = lower(%s)",
+            """
+            SELECT user_id, login_id, display_name, status, password_hash, must_change_password
+            FROM users WHERE lower(login_id) = lower(%s)
+            """,
             ((login_id or "").strip(),),
         )
         row = cur.fetchone()
@@ -73,18 +103,40 @@ def get_login_credentials(conn, login_id: str) -> dict | None:
         "display_name": row[2],
         "status": row[3],
         "password_hash": row[4],
+        "must_change_password": bool(row[5]),
     }
 
 
-def create_user(conn, login_id: str, display_name: str, password: str,
-                created_by: str | None = None) -> dict:
+def get_account_status(conn, login_id: str) -> dict:
+    creds = get_login_credentials(conn, login_id)
+    if not creds:
+        return {"exists": False, "needs_password": False, "active": False}
+    return {
+        "exists": True,
+        "needs_password": needs_password_setup(creds["password_hash"], creds["must_change_password"]),
+        "active": creds["status"] == "active",
+        "login_id": creds["login_id"],
+        "display_name": creds["display_name"],
+    }
+
+
+def create_user(conn, login_id: str, display_name: str, password: str | None = None,
+                created_by: str | None = None, invite: bool = False) -> dict:
     login_id = (login_id or "").strip()
     display_name = (display_name or "").strip()
     if not login_id:
         raise ValueError("login_id required")
     if not display_name:
         raise ValueError("display_name required")
-    pwd_hash = hash_password(password)  # raises ValueError if too short
+
+    password = (password or "").strip()
+    if invite or not password:
+        pwd_hash = None
+        must_change = True
+    else:
+        pwd_hash = hash_password(password)
+        must_change = False
+
     cur = conn.cursor()
     try:
         cur.execute("SELECT 1 FROM users WHERE lower(login_id) = lower(%s)", (login_id,))
@@ -92,16 +144,36 @@ def create_user(conn, login_id: str, display_name: str, password: str,
             raise ValueError("login_id already exists")
         cur.execute(
             f"""
-            INSERT INTO users (login_id, display_name, password_hash, created_by)
-            VALUES (%s, %s, %s, %s)
+            INSERT INTO users (login_id, display_name, password_hash, must_change_password, created_by)
+            VALUES (%s, %s, %s, %s, %s)
             RETURNING {_USER_COLS}
             """,
-            (login_id, display_name, pwd_hash, created_by),
+            (login_id, display_name, pwd_hash, must_change, created_by),
         )
         row = cur.fetchone()
     finally:
         cur.close()
-    return _user_row(row)
+    user = _user_row(row)
+    user["needs_password"] = needs_password_setup(pwd_hash, must_change)
+    return user
+
+
+def set_initial_password(conn, user_id: int, password: str) -> None:
+    pwd_hash = hash_password(password)
+    cur = conn.cursor()
+    try:
+        cur.execute(
+            """
+            UPDATE users
+            SET password_hash = %s, must_change_password = FALSE
+            WHERE user_id = %s
+            """,
+            (pwd_hash, user_id),
+        )
+        if cur.rowcount != 1:
+            raise ValueError("user not found")
+    finally:
+        cur.close()
 
 
 def update_user(conn, user_id: int, display_name: str | None = None,
@@ -121,8 +193,11 @@ def update_user(conn, user_id: int, display_name: str | None = None,
         updates.append("status = %s")
         params.append(status)
     if password is not None:
-        updates.append("password_hash = %s")
-        params.append(hash_password(password))
+        pwd = password.strip()
+        if pwd:
+            updates.append("password_hash = %s")
+            params.append(hash_password(pwd))
+            updates.append("must_change_password = FALSE")
     if not updates:
         return get_user(conn, user_id)
     params.append(user_id)
@@ -137,7 +212,6 @@ def update_user(conn, user_id: int, display_name: str | None = None,
         cur.close()
     if not row:
         return None
-    # Disabling a user kills their active sessions immediately.
     if status == "disabled":
         revoke_user_sessions(conn, user_id)
     return get_user(conn, user_id)
@@ -149,6 +223,33 @@ def touch_last_login(conn, user_id: int) -> None:
         cur.execute("UPDATE users SET last_login_at = NOW() WHERE user_id = %s", (user_id,))
     finally:
         cur.close()
+
+
+def ensure_user_has_role(conn, login_id: str, role_name: str) -> bool:
+    """Assign role if user exists and does not have it yet. Returns True if changed."""
+    creds = get_login_credentials(conn, login_id)
+    if not creds:
+        return False
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT role_id FROM roles WHERE lower(name) = lower(%s)", (role_name,))
+        row = cur.fetchone()
+        if not row:
+            return False
+        role_id = row[0]
+        cur.execute(
+            "SELECT 1 FROM user_roles WHERE user_id = %s AND role_id = %s",
+            (creds["user_id"], role_id),
+        )
+        if cur.fetchone():
+            return False
+        cur.execute(
+            "INSERT INTO user_roles (user_id, role_id) VALUES (%s, %s)",
+            (creds["user_id"], role_id),
+        )
+    finally:
+        cur.close()
+    return True
 
 
 # ---- Roles & permissions ----------------------------------------------

@@ -35,18 +35,24 @@ def list_users(_: dict = Depends(_admin)):
 def create_user(body: dict, admin: dict = Depends(_admin)):
     conn = db.get_connection()
     try:
+        password = (body.get("password") or "").strip()
+        invite = not password
         user = users_svc.create_user(
             conn,
             login_id=body.get("login_id"),
             display_name=body.get("display_name"),
-            password=body.get("password") or "",
+            password=password or None,
             created_by=admin.get("login_id"),
+            invite=invite,
         )
         role_ids = body.get("role_ids")
         if role_ids:
             users_svc.set_user_roles(conn, user["user_id"], role_ids)
         conn.commit()
-        return users_svc.get_user(conn, user["user_id"])
+        full = users_svc.get_user(conn, user["user_id"])
+        login_id = full["login_id"]
+        full["invite_url"] = f"/cis/?user={login_id}"
+        return full
     except ValueError as e:
         conn.rollback()
         raise HTTPException(status_code=400, detail=str(e))

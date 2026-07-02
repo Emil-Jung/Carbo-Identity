@@ -3,27 +3,13 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
-from typing import Any
 
 from app import config as app_config
 from app.security import generate_session_token, hash_token, verify_password
 from app.services import users as users_svc
 
 
-def login(conn, login_id: str, password: str) -> dict:
-    """Validate credentials, create a session, return {token, user, permissions, expires_at}.
-
-    Raises ValueError('invalid') for bad login/password, ('disabled') for disabled user.
-    """
-    creds = users_svc.get_login_credentials(conn, login_id)
-    if not creds:
-        raise ValueError("invalid")
-    if not verify_password(password, creds["password_hash"]):
-        raise ValueError("invalid")
-    if creds["status"] != "active":
-        raise ValueError("disabled")
-
-    user_id = creds["user_id"]
+def _create_session(conn, user_id: int, creds: dict) -> dict:
     token = generate_session_token()
     token_h = hash_token(token)
     expires_at = datetime.now(timezone.utc) + timedelta(hours=app_config.SESSION_TTL_HOURS)
@@ -52,7 +38,43 @@ def login(conn, login_id: str, password: str) -> dict:
             "display_name": creds["display_name"],
         },
         "permissions": permissions,
+        "must_change_password": bool(creds.get("must_change_password")),
     }
+
+
+def login(conn, login_id: str, password: str) -> dict:
+    """Validate credentials, create a session, return token payload.
+
+    Raises ValueError('invalid'), ('disabled'), ('password_not_set').
+    """
+    creds = users_svc.get_login_credentials(conn, login_id)
+    if not creds:
+        raise ValueError("invalid")
+    if creds["status"] != "active":
+        raise ValueError("disabled")
+    if users_svc.needs_password_setup(creds["password_hash"], creds["must_change_password"]):
+        if creds["password_hash"] is None:
+            raise ValueError("password_not_set")
+    if not verify_password(password, creds["password_hash"]):
+        raise ValueError("invalid")
+
+    return _create_session(conn, creds["user_id"], creds)
+
+
+def set_initial_password(conn, login_id: str, password: str) -> dict:
+    """First sign-in: set password for an invited user and start a session."""
+    creds = users_svc.get_login_credentials(conn, login_id)
+    if not creds:
+        raise ValueError("invalid")
+    if creds["status"] != "active":
+        raise ValueError("disabled")
+    if not users_svc.needs_password_setup(creds["password_hash"], creds["must_change_password"]):
+        raise ValueError("already_set")
+
+    users_svc.set_initial_password(conn, creds["user_id"], password)
+    creds["password_hash"] = "set"
+    creds["must_change_password"] = False
+    return _create_session(conn, creds["user_id"], creds)
 
 
 def resolve_token(conn, token: str, update_last_used: bool = True) -> dict | None:
