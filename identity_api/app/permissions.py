@@ -49,6 +49,14 @@ DEFAULT_ROLES: dict[str, dict] = {
         "description": "Staff — view quality sheets only (CIS default for new users)",
         "permissions": ["quality.view"],
     },
+    "production_office": {
+        "description": "Office — capture quality sheets and manage producers (Jessica / PJ)",
+        "permissions": [
+            "quality.capture",
+            "quality.view",
+            "producers.office",
+        ],
+    },
 }
 
 
