@@ -24,7 +24,7 @@ PERMISSION_CATALOG: list[dict] = [
 
     {"key": "identity.device_keys", "label": "Device keys", "module": "device_keys", "section": "Administration"},
 
-    {"key": "producers.office", "label": "Producers (office)", "module": "producers_office", "section": "Applications"},
+    {"key": "producers.office", "label": "Capture Producers", "module": "producers_office", "section": "Applications"},
 
     {"key": "traceability.access", "label": "Traceability", "module": "traceability", "section": "Applications"},
 
@@ -32,7 +32,7 @@ PERMISSION_CATALOG: list[dict] = [
 
     {"key": "maintenance.manager", "label": "Maintenance (desktop app)", "module": "maintenance_manager", "section": "Applications"},
 
-    {"key": "producers.public.view", "label": "FSC Public (registered members lookup)", "module": "producers_public", "section": "Reports & lookups"},
+    {"key": "producers.view", "label": "View Producers", "module": "producers_view", "section": "Reports & lookups"},
 
     {"key": "quality.view", "label": "Quality Analysis", "module": "quality_view", "section": "Reports & lookups"},
 
@@ -102,7 +102,7 @@ DEFAULT_ROLES: dict[str, dict] = {
 
     "production_office": {
 
-        "description": "Template — quality capture, view, and producers office",
+        "description": "Template — quality capture, view, and producer list (read-only)",
 
         "permissions": [
 
@@ -110,7 +110,7 @@ DEFAULT_ROLES: dict[str, dict] = {
 
             "quality.view",
 
-            "producers.office",
+            "producers.view",
 
         ],
 
