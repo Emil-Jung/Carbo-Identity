@@ -26,7 +26,7 @@ fi
 
 echo ""
 echo "--- database migrations ---"
-bash run_migrations.sh
+( cd identity_api && bash run_migrations.sh )
 
 echo ""
 echo "--- seed roles ---"

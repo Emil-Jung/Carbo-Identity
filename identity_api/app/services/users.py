@@ -363,10 +363,7 @@ def set_user_roles(conn, user_id: int, role_ids: list[int]) -> None:
         cur.close()
 
 
-def get_effective_permissions(conn, user_id: int) -> list[str]:
-    direct = get_user_tile_permissions(conn, user_id)
-    if direct:
-        return direct
+def _role_permissions_for_user(conn, user_id: int) -> list[str]:
     cur = conn.cursor()
     try:
         cur.execute(
@@ -379,9 +376,17 @@ def get_effective_permissions(conn, user_id: int) -> list[str]:
             """,
             (user_id,),
         )
-        return [r[0] for r in cur.fetchall()]
+        return [r[0] for r in cur.fetchall() if perms.is_valid_permission(r[0])]
     finally:
         cur.close()
+
+
+def get_effective_permissions(conn, user_id: int) -> list[str]:
+    """Individual tile list wins when present; otherwise permissions from roles."""
+    direct = get_user_tile_permissions(conn, user_id)
+    if direct:
+        return direct
+    return _role_permissions_for_user(conn, user_id)
 
 
 def get_user_tile_permissions(conn, user_id: int) -> list[str]:
@@ -391,23 +396,35 @@ def get_user_tile_permissions(conn, user_id: int) -> list[str]:
             "SELECT permission FROM user_permissions WHERE user_id = %s ORDER BY permission",
             (user_id,),
         )
-        return [r[0] for r in cur.fetchall()]
+        return [r[0] for r in cur.fetchall() if perms.is_valid_permission(r[0])]
+    except Exception:
+        # Migration 003 not applied yet — behave as roles-only until deploy completes.
+        return []
     finally:
         cur.close()
 
 
 def set_user_tile_permissions(conn, user_id: int, permissions: list[str]) -> None:
-    bad = [p for p in (permissions or []) if not perms.is_valid_permission(p)]
+    cleaned = [p for p in (permissions or []) if p and perms.is_valid_permission(p)]
+    bad = [p for p in (permissions or []) if p and not perms.is_valid_permission(p)]
     if bad:
         raise ValueError(f"unknown permission(s): {', '.join(bad)}")
     cur = conn.cursor()
     try:
         cur.execute("DELETE FROM user_permissions WHERE user_id = %s", (user_id,))
-        for p in sorted(set(permissions or [])):
+        for p in sorted(set(cleaned)):
             cur.execute(
                 "INSERT INTO user_permissions (user_id, permission) VALUES (%s, %s)",
                 (user_id, p),
             )
+    except Exception as exc:
+        err = str(exc).lower()
+        if "user_permissions" in err and ("does not exist" in err or "no such table" in err):
+            raise ValueError(
+                "Per-user tile permissions are not enabled on the server yet. "
+                "Run identity_api/migrations/003_user_tile_permissions.sql (bash deploy_on_server.sh)."
+            ) from exc
+        raise
     finally:
         cur.close()
 

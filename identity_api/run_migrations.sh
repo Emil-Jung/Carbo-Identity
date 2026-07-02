@@ -16,6 +16,6 @@ if [[ -z "${DATABASE_URL:-}" ]]; then
 fi
 for f in migrations/*.sql; do
   echo ">> $f"
-  psql "$DATABASE_URL" -f "$f" || true
+  psql "$DATABASE_URL" -f "$f"
 done
 echo "Done."
