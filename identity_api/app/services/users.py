@@ -376,7 +376,11 @@ def _role_permissions_for_user(conn, user_id: int) -> list[str]:
             """,
             (user_id,),
         )
-        return [r[0] for r in cur.fetchall() if perms.is_valid_permission(r[0])]
+        return [
+            norm
+            for r in cur.fetchall()
+            if (norm := perms.normalize_permission(r[0]))
+        ]
     finally:
         cur.close()
 
@@ -396,7 +400,14 @@ def get_user_tile_permissions(conn, user_id: int) -> list[str]:
             "SELECT permission FROM user_permissions WHERE user_id = %s ORDER BY permission",
             (user_id,),
         )
-        return [r[0] for r in cur.fetchall() if perms.is_valid_permission(r[0])]
+        seen: set[str] = set()
+        out: list[str] = []
+        for r in cur.fetchall():
+            norm = perms.normalize_permission(r[0])
+            if norm and norm not in seen:
+                seen.add(norm)
+                out.append(norm)
+        return sorted(out)
     except Exception:
         # Migration 003 not applied yet — behave as roles-only until deploy completes.
         return []
@@ -405,8 +416,16 @@ def get_user_tile_permissions(conn, user_id: int) -> list[str]:
 
 
 def set_user_tile_permissions(conn, user_id: int, permissions: list[str]) -> None:
-    cleaned = [p for p in (permissions or []) if p and perms.is_valid_permission(p)]
-    bad = [p for p in (permissions or []) if p and not perms.is_valid_permission(p)]
+    cleaned: list[str] = []
+    bad: list[str] = []
+    for p in permissions or []:
+        if not p:
+            continue
+        norm = perms.normalize_permission(p)
+        if norm:
+            cleaned.append(norm)
+        else:
+            bad.append(p)
     if bad:
         raise ValueError(f"unknown permission(s): {', '.join(bad)}")
     cur = conn.cursor()

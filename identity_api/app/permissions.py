@@ -51,6 +51,21 @@ PERMISSION_CATALOG: list[dict] = [
 ALL_PERMISSIONS: set[str] = {p["key"] for p in PERMISSION_CATALOG}
 
 
+# Old CIS keys → current catalog (e.g. after tile renames; migration 004 also updates DB).
+PERMISSION_ALIASES: dict[str, str] = {
+    "producers.public.view": "producers.view",
+}
+
+
+def normalize_permission(perm: str) -> str | None:
+    """Map legacy keys to catalog keys; return None if unknown."""
+    key = (perm or "").strip()
+    if not key:
+        return None
+    key = PERMISSION_ALIASES.get(key, key)
+    return key if key in ALL_PERMISSIONS else None
+
+
 
 # Default roles = starter templates only (admin can change; users can mix tiles individually).
 
@@ -124,7 +139,7 @@ DEFAULT_ROLES: dict[str, dict] = {
 
 def is_valid_permission(perm: str) -> bool:
 
-    return perm in ALL_PERMISSIONS
+    return normalize_permission(perm) is not None
 
 
 
