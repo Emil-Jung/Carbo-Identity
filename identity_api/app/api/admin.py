@@ -48,6 +48,8 @@ def create_user(body: dict, admin: dict = Depends(_admin)):
         role_ids = body.get("role_ids")
         if role_ids:
             users_svc.set_user_roles(conn, user["user_id"], role_ids)
+        if "tile_permissions" in body:
+            users_svc.set_user_tile_permissions(conn, user["user_id"], body.get("tile_permissions") or [])
         conn.commit()
         full = users_svc.get_user(conn, user["user_id"])
         login_id = full["login_id"]
@@ -75,6 +77,8 @@ def update_user(user_id: int, body: dict, _: dict = Depends(_admin)):
             raise HTTPException(status_code=404, detail="User not found")
         if "role_ids" in body:
             users_svc.set_user_roles(conn, user_id, body.get("role_ids") or [])
+        if "tile_permissions" in body:
+            users_svc.set_user_tile_permissions(conn, user_id, body.get("tile_permissions") or [])
         conn.commit()
         return users_svc.get_user(conn, user_id)
     except ValueError as e:

@@ -25,6 +25,10 @@ else
 fi
 
 echo ""
+echo "--- database migrations ---"
+bash run_migrations.sh
+
+echo ""
 echo "--- seed roles ---"
 cd identity_api
 unset DATABASE_URL

@@ -50,6 +50,7 @@ def list_users(conn) -> list[dict]:
         cur.close()
     for u in users:
         u["roles"] = get_user_role_names(conn, u["user_id"])
+        u["tile_permissions"] = get_user_tile_permissions(conn, u["user_id"])
         u["permissions"] = get_effective_permissions(conn, u["user_id"])
     return users
 
@@ -77,6 +78,7 @@ def get_user(conn, user_id: int) -> dict | None:
     pwd_hash = _fetch_password_hash(conn, user_id)
     user["needs_password"] = needs_password_setup(pwd_hash, user.get("must_change_password", False))
     user["roles"] = get_user_role_names(conn, user_id)
+    user["tile_permissions"] = get_user_tile_permissions(conn, user_id)
     user["permissions"] = get_effective_permissions(conn, user_id)
     return user
 
@@ -362,6 +364,9 @@ def set_user_roles(conn, user_id: int, role_ids: list[int]) -> None:
 
 
 def get_effective_permissions(conn, user_id: int) -> list[str]:
+    direct = get_user_tile_permissions(conn, user_id)
+    if direct:
+        return direct
     cur = conn.cursor()
     try:
         cur.execute(
@@ -375,6 +380,34 @@ def get_effective_permissions(conn, user_id: int) -> list[str]:
             (user_id,),
         )
         return [r[0] for r in cur.fetchall()]
+    finally:
+        cur.close()
+
+
+def get_user_tile_permissions(conn, user_id: int) -> list[str]:
+    cur = conn.cursor()
+    try:
+        cur.execute(
+            "SELECT permission FROM user_permissions WHERE user_id = %s ORDER BY permission",
+            (user_id,),
+        )
+        return [r[0] for r in cur.fetchall()]
+    finally:
+        cur.close()
+
+
+def set_user_tile_permissions(conn, user_id: int, permissions: list[str]) -> None:
+    bad = [p for p in (permissions or []) if not perms.is_valid_permission(p)]
+    if bad:
+        raise ValueError(f"unknown permission(s): {', '.join(bad)}")
+    cur = conn.cursor()
+    try:
+        cur.execute("DELETE FROM user_permissions WHERE user_id = %s", (user_id,))
+        for p in sorted(set(permissions or [])):
+            cur.execute(
+                "INSERT INTO user_permissions (user_id, permission) VALUES (%s, %s)",
+                (user_id, p),
+            )
     finally:
         cur.close()
 
