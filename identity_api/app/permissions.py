@@ -44,8 +44,8 @@ DEFAULT_ROLES: dict[str, dict] = {
         "permissions": ["maintenance.fuel.view"],
     },
     "quality_viewer": {
-        "description": "Quality viewer — read-only sieving data (CIS default for staff)",
-        "permissions": ["quality.view", "quality.capture"],
+        "description": "Staff — view quality sheets only (CIS default for new users)",
+        "permissions": ["quality.view"],
     },
 }
 

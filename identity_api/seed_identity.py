@@ -5,7 +5,7 @@ Run once after applying schema_identity.sql:
     cd identity_api
     python seed_identity.py
 
-- Creates/updates the default roles (admin, operations, finance) and their permissions.
+- Creates/updates the default roles (admin, operations, finance, quality_viewer) and their permissions.
 - Creates the bootstrap admin user if it does not exist.
   Password: BOOTSTRAP_ADMIN_PASSWORD env, else a random one printed ONCE here.
 
