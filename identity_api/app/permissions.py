@@ -20,6 +20,7 @@ PERMISSION_CATALOG: list[dict] = [
     {"key": "quality.view", "label": "Quality — Viewer", "module": "quality_view"},
     {"key": "producers.office", "label": "Producers — Office capture", "module": "producers_office"},
     {"key": "traceability.access", "label": "Traceability — scanner / supervisor", "module": "traceability"},
+    {"key": "traceability.stock.view", "label": "Traceability — Big-K bag stock (read-only)", "module": "bag_stock"},
 ]
 
 ALL_PERMISSIONS: set[str] = {p["key"] for p in PERMISSION_CATALOG}
