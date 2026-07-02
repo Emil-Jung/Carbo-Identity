@@ -87,10 +87,8 @@ curl -s https://bkweb3.bigk.co.uk/identity/api/health
 ## Updating later
 
 ```bash
-cd /opt/carbo/carbo-identity && git pull
-cd identity_api && .venv/bin/pip install -r requirements.txt
-# apply any new schema_*.sql, then:
-sudo systemctl restart carbo-identity
+cd /opt/carbo/carbo-identity
+bash deploy_on_server.sh
 ```
 
 ## How other services check tokens (introspection)

@@ -94,16 +94,14 @@ curl -s https://bkweb3.bigk.co.uk/cis/app/version.json
 # =============================================================================
 #
 # Identity code:
-#   cd /opt/carbo/carbo-identity && git pull
-#   cd identity_api && bash install_service_on_server.sh
+#   cd /opt/carbo/carbo-identity && bash deploy_on_server.sh
 #   # New SQL: cat identity_api/some_migration.sql | sudo -u postgres psql -d carbo_identity
 #
 # CIS installer (from Windows PC after BUILD + stage):
 #   UPLOAD-CIS-TO-SERVER.cmd  →  sudo cp ~/cis_app_upload/* /opt/carbo/cis/app/
 #
-# CIS shell only (optional web copy):
-#   cd /opt/carbo/carbo-cis && git pull
-#   cp -r shell/* /opt/carbo/cis/shell/
+# CIS shell (browser at /cis/):
+#   cd /opt/carbo/carbo-cis && bash deploy_on_server.sh
 #
 # =============================================================================
 # SMOKE TEST
