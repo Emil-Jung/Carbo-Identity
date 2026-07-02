@@ -34,6 +34,10 @@ DEFAULT_ROLES: dict[str, dict] = {
         "description": "Finance manager — consumption numbers only",
         "permissions": ["maintenance.fuel.view"],
     },
+    "quality_viewer": {
+        "description": "Quality viewer — read-only sieving data (CIS default for staff)",
+        "permissions": ["quality.view"],
+    },
 }
 
 
