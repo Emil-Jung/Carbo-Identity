@@ -35,6 +35,7 @@ PERMISSION_CATALOG: list[dict] = [
     {"key": "traceability.stock.view", "label": "Carbo Big-K Bag Stock", "module": "bag_stock", "section": "Applications"},
 
     {"key": "producers.view", "label": "View Producers", "module": "producers_view", "section": "Reports & lookups"},
+    {"key": "producers.permit_status", "label": "Permit Status", "module": "permit_status", "section": "Reports & lookups"},
 
     {"key": "quality.view", "label": "Quality Analysis", "module": "quality_view", "section": "Reports & lookups"},
 
