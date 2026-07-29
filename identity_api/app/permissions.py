@@ -39,6 +39,8 @@ PERMISSION_CATALOG: list[dict] = [
 
     {"key": "quality.view", "label": "Quality Analysis", "module": "quality_view", "section": "Reports & lookups"},
 
+    {"key": "quality.restaurant_report", "label": "Restaurant quality", "module": "restaurant_report", "section": "Reports & lookups"},
+
     {"key": "maintenance.ops.view", "label": "Fleet Status", "module": "maintenance_ops", "section": "Reports & lookups"},
 
     {"key": "maintenance.fuel.view", "label": "Consumption (diesel / fuel)", "module": "consumption", "section": "Reports & lookups"},
@@ -125,6 +127,8 @@ DEFAULT_ROLES: dict[str, dict] = {
             "quality.capture",
 
             "quality.view",
+
+            "quality.restaurant_report",
 
             "producers.view",
 
