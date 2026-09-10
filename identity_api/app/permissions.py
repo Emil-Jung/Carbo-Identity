@@ -4,9 +4,10 @@ Central permission catalog for the whole Carbo cloud.
 
 
 
-Each permission unlocks exactly one CIS dashboard tile (module).
+Each catalog key is assigned per user in Users & access.
 
-Roles are optional templates; assign tiles individually per user in Users & access.
+Keys without ``parent`` unlock a CIS dashboard tile (module). Keys with
+``parent`` are options inside that tile (not extra dashboard tiles).
 
 """
 
@@ -27,12 +28,12 @@ PERMISSION_CATALOG: list[dict] = [
     {"key": "producers.office", "label": "Capture Producers", "module": "producers_office", "section": "Applications"},
 
     {"key": "traceability.access", "label": "Traceability", "module": "traceability", "section": "Applications"},
+    {"key": "traceability.labels.print", "label": "Bag labels (print)", "module": "bag_labels", "section": "Applications", "parent": "traceability"},
+    {"key": "traceability.stock.view", "label": "Bag stock", "module": "bag_stock", "section": "Applications", "parent": "traceability"},
 
     {"key": "quality.capture", "label": "Quality (capture)", "module": "quality_capture", "section": "Applications"},
 
     {"key": "maintenance.manager", "label": "Maintenance (desktop app)", "module": "maintenance_manager", "section": "Applications"},
-
-    {"key": "traceability.stock.view", "label": "Carbo Big-K Bag Stock", "module": "bag_stock", "section": "Applications"},
 
     {"key": "producers.view", "label": "View Producers", "module": "producers_view", "section": "Reports & lookups"},
     {"key": "producers.permit_status", "label": "Permit Status", "module": "permit_status", "section": "Reports & lookups"},
@@ -40,6 +41,8 @@ PERMISSION_CATALOG: list[dict] = [
     {"key": "quality.view", "label": "Quality Analysis", "module": "quality_view", "section": "Reports & lookups"},
 
     {"key": "quality.restaurant_report", "label": "Restaurant quality", "module": "restaurant_report", "section": "Reports & lookups"},
+
+    {"key": "production.supplier_contacts", "label": "Supplier contacts", "module": "supplier_contacts", "section": "Reports & lookups"},
 
     {"key": "maintenance.ops.view", "label": "Fleet Status", "module": "maintenance_ops", "section": "Reports & lookups"},
 
@@ -129,6 +132,8 @@ DEFAULT_ROLES: dict[str, dict] = {
             "quality.view",
 
             "quality.restaurant_report",
+
+            "production.supplier_contacts",
 
             "producers.view",
 
