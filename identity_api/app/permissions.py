@@ -28,7 +28,7 @@ PERMISSION_CATALOG: list[dict] = [
     {"key": "producers.office", "label": "Capture Producers", "module": "producers_office", "section": "Applications"},
 
     {"key": "traceability.access", "label": "Traceability", "module": "traceability", "section": "Applications"},
-    {"key": "traceability.labels.print", "label": "Bag labels (print)", "module": "bag_labels", "section": "Applications", "parent": "traceability"},
+    {"key": "traceability.labels.print", "label": "Print Labels", "module": "print_labels", "section": "Applications", "parent": "traceability"},
     {"key": "traceability.stock.view", "label": "Bag stock", "module": "bag_stock", "section": "Applications", "parent": "traceability"},
 
     {"key": "quality.capture", "label": "Quality (capture)", "module": "quality_capture", "section": "Applications"},
@@ -60,6 +60,7 @@ ALL_PERMISSIONS: set[str] = {p["key"] for p in PERMISSION_CATALOG}
 # Old CIS keys → current catalog (e.g. after tile renames; migration 004 also updates DB).
 PERMISSION_ALIASES: dict[str, str] = {
     "producers.public.view": "producers.view",
+    "traceability.print_labels": "traceability.labels.print",
 }
 
 
