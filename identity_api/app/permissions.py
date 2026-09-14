@@ -26,6 +26,13 @@ PERMISSION_CATALOG: list[dict] = [
     {"key": "identity.device_keys", "label": "Device keys", "module": "device_keys", "section": "Administration"},
 
     {"key": "producers.office", "label": "Capture Producers", "module": "producers_office", "section": "Applications"},
+    {
+        "key": "producers.convert_to_non_fsc",
+        "label": "Convert FSC → Non FSC",
+        "module": "producers_convert_non_fsc",
+        "section": "Applications",
+        "parent": "producers_office",
+    },
 
     {"key": "traceability.access", "label": "Traceability", "module": "traceability", "section": "Applications"},
     {"key": "traceability.control_room", "label": "Control Room", "module": "control_room", "section": "Applications", "parent": "traceability"},
@@ -45,7 +52,7 @@ PERMISSION_CATALOG: list[dict] = [
 
     {"key": "production.supplier_contacts", "label": "Supplier contacts", "module": "supplier_contacts", "section": "Reports & lookups"},
 
-    {"key": "maintenance.ops.view", "label": "Fleet Status", "module": "maintenance_ops", "section": "Reports & lookups"},
+    {"key": "maintenance.ops.view", "label": "Fleet Status (issues, fixes, repeat faults)", "module": "maintenance_ops", "section": "Reports & lookups"},
 
     {"key": "maintenance.fuel.view", "label": "Consumption (diesel / fuel)", "module": "consumption", "section": "Reports & lookups"},
 

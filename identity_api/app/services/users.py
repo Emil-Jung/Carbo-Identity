@@ -386,7 +386,10 @@ def _role_permissions_for_user(conn, user_id: int) -> list[str]:
 
 
 def get_effective_permissions(conn, user_id: int) -> list[str]:
-    """Individual tile list wins when present; otherwise permissions from roles."""
+    """Individual tile list wins when present; admin role always has full catalog."""
+    role_names = get_user_role_names(conn, user_id)
+    if "admin" in role_names:
+        return sorted(perms.ALL_PERMISSIONS)
     direct = get_user_tile_permissions(conn, user_id)
     if direct:
         return direct
