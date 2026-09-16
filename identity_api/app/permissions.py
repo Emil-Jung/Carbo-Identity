@@ -37,7 +37,7 @@ PERMISSION_CATALOG: list[dict] = [
     {"key": "traceability.access", "label": "Traceability", "module": "traceability", "section": "Applications"},
     {"key": "traceability.control_room", "label": "Control Room", "module": "control_room", "section": "Applications", "parent": "traceability"},
     {"key": "traceability.labels.print", "label": "Print Labels", "module": "print_labels", "section": "Applications", "parent": "traceability"},
-    {"key": "traceability.stock.view", "label": "Bag stock", "module": "bag_stock", "section": "Applications", "parent": "traceability"},
+    {"key": "traceability.stock.view", "label": "Bags Movement", "module": "bags_movement_report", "section": "Applications", "parent": "traceability"},
 
     {"key": "quality.capture", "label": "Quality (capture)", "module": "quality_capture", "section": "Applications"},
 
