@@ -148,8 +148,6 @@ DEFAULT_ROLES: dict[str, dict] = {
 
             "producers.view",
 
-            "traceability.bags_movement",
-
         ],
 
     },
