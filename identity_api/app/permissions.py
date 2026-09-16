@@ -50,6 +50,8 @@ PERMISSION_CATALOG: list[dict] = [
 
     {"key": "quality.restaurant_report", "label": "Restaurant quality", "module": "restaurant_report", "section": "Reports & lookups"},
 
+    {"key": "traceability.bags_movement", "label": "Bags Movement", "module": "bags_movement_report", "section": "Reports & lookups"},
+
     {"key": "production.supplier_contacts", "label": "Supplier contacts", "module": "supplier_contacts", "section": "Reports & lookups"},
 
     {"key": "maintenance.ops.view", "label": "Fleet Status (issues, fixes, repeat faults)", "module": "maintenance_ops", "section": "Reports & lookups"},
@@ -145,6 +147,8 @@ DEFAULT_ROLES: dict[str, dict] = {
             "production.supplier_contacts",
 
             "producers.view",
+
+            "traceability.bags_movement",
 
         ],
 
