@@ -1,0 +1,4 @@
+-- CIS report tiles: Containers (traceability.containers) and
+-- Movement schedule (traceability.movement_jobs).
+-- Permissions are defined in app/permissions.py. Assign per user in CIS → Users & access.
+-- Intentionally no auto-grant here — existing user_permissions rows are never removed.
