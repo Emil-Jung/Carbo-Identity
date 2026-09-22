@@ -38,6 +38,8 @@ PERMISSION_CATALOG: list[dict] = [
     {"key": "traceability.control_room", "label": "Control Room", "module": "control_room", "section": "Applications", "parent": "traceability"},
     {"key": "traceability.labels.print", "label": "Print Labels", "module": "print_labels", "section": "Applications", "parent": "traceability"},
     {"key": "traceability.stock.view", "label": "Bags Movement", "module": "bags_movement_report", "section": "Applications", "parent": "traceability"},
+    {"key": "traceability.containers", "label": "Containers", "module": "containers", "section": "Applications", "parent": "traceability"},
+    {"key": "traceability.movement_jobs", "label": "Movement schedule", "module": "movement_schedule", "section": "Applications", "parent": "traceability"},
 
     {"key": "quality.capture", "label": "Quality (capture)", "module": "quality_capture", "section": "Applications"},
 
@@ -52,9 +54,7 @@ PERMISSION_CATALOG: list[dict] = [
 
     {"key": "traceability.bags_movement", "label": "Bags Movement", "module": "bags_movement_report", "section": "Reports & lookups"},
 
-    {"key": "traceability.containers", "label": "Containers", "module": "containers", "section": "Reports & lookups"},
-
-    {"key": "traceability.movement_jobs", "label": "Movement schedule", "module": "movement_schedule", "section": "Reports & lookups"},
+    {"key": "traceability.bags_status", "label": "Bags Status", "module": "bags_status_report", "section": "Reports & lookups"},
 
     {"key": "production.supplier_contacts", "label": "Supplier contacts", "module": "supplier_contacts", "section": "Reports & lookups"},
 
