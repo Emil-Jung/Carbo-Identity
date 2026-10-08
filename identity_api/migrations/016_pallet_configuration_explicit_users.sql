@@ -10,5 +10,5 @@ WHERE permission = 'traceability.pallet_configuration';
 INSERT INTO user_permissions (user_id, permission)
 SELECT user_id, 'traceability.pallet_configuration'
 FROM users
-WHERE lower(login_id) IN ('emilj', 'pjs', 'pieterjans')
+WHERE lower(login_id) IN ('emilj', 'pieterjans')
 ON CONFLICT DO NOTHING;
