@@ -18,6 +18,10 @@ from __future__ import annotations
 
 
 # (key, human label, CIS module id, dashboard section for admin UI)
+#
+# New keys are OFF for everyone until assigned in Users & access (or a migration
+# names explicit login_id values). Never bulk-grant from traceability.access etc.
+# See docs/NEW_PERMISSIONS.md.
 
 PERMISSION_CATALOG: list[dict] = [
 
