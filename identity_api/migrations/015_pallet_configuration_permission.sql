@@ -1,23 +1,8 @@
--- Pallet Configuration: grant to Control Room and Print Labels users (catalog managers).
+-- Pallet Configuration permission is defined in app/permissions.py (catalog checkbox).
+-- Grant explicitly per user in CIS → Users & access, or run scripts/grant_pallet_configuration_permissions.sql on traceability repo.
 
 INSERT INTO user_permissions (user_id, permission)
 SELECT user_id, 'traceability.pallet_configuration'
-FROM user_permissions
-WHERE permission IN (
-    'traceability.access',
-    'traceability.control_room',
-    'traceability.labels.print',
-    'traceability.stock.view'
-)
-ON CONFLICT DO NOTHING;
-
-INSERT INTO role_permissions (role_id, permission)
-SELECT role_id, 'traceability.pallet_configuration'
-FROM role_permissions
-WHERE permission IN (
-    'traceability.access',
-    'traceability.control_room',
-    'traceability.labels.print',
-    'traceability.stock.view'
-)
+FROM users
+WHERE lower(login_id) = 'pjs'
 ON CONFLICT DO NOTHING;
