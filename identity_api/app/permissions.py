@@ -66,6 +66,13 @@ PERMISSION_CATALOG: list[dict] = [
 
     {"key": "quality.restaurant_report", "label": "Restaurant quality", "module": "restaurant_report", "section": "Reports & lookups"},
 
+    {
+        "key": "production.deliveries_register",
+        "label": "Charcoal deliveries (load sheet)",
+        "module": "deliveries_register",
+        "section": "Reports & lookups",
+    },
+
     {"key": "traceability.bags_movement", "label": "Charcoal Intake", "module": "bags_movement_report", "section": "Reports & lookups"},
 
     {"key": "traceability.bags_status", "label": "Bags Status", "module": "bags_status_report", "section": "Reports & lookups"},

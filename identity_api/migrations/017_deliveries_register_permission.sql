@@ -1,0 +1,2 @@
+-- production.deliveries_register — read-only Deliveries sheet for management (not PJ edit tile).
+-- Grant in CIS → Users & access; do not bulk-copy from traceability.access.
