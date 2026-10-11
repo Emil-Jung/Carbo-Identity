@@ -1,0 +1,2 @@
+-- Packaging shift (traceability.packaging_shift) — assign in CIS Users & access.
+-- Permission row is defined in app/permissions.py; no auto-grant.

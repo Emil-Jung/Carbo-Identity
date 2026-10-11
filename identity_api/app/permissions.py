@@ -52,6 +52,7 @@ PERMISSION_CATALOG: list[dict] = [
     {"key": "traceability.stock.view", "label": "Charcoal Intake", "module": "bags_movement_report", "section": "Applications", "parent": "traceability"},
     {"key": "traceability.containers", "label": "Containers", "module": "containers", "section": "Applications", "parent": "traceability"},
     {"key": "traceability.movement_jobs", "label": "Movement schedule", "module": "movement_schedule", "section": "Applications", "parent": "traceability"},
+    {"key": "traceability.packaging_shift", "label": "Packaging shift", "module": "packaging_shift", "section": "Applications", "parent": "traceability"},
     {"key": "traceability.weathering.override", "label": "Manager Override", "module": "manager_override", "section": "Applications", "parent": "traceability"},
     {"key": "traceability.pallet_configuration", "label": "Pallet Configuration", "module": "pallet_configuration", "section": "Applications", "parent": "traceability"},
 
