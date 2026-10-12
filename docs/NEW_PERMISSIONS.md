@@ -1,8 +1,9 @@
-# Adding a CIS permission — default OFF
+# Adding a CIS permission — default OFF (NO)
 
 Every new capability gets a catalog entry in `identity_api/app/permissions.py`.
-**Nobody receives it until an administrator ticks the box** (or a migration names
-specific `login_id` values).
+In **Users & access**, the new checkbox starts **unchecked (NO) for everyone**.
+**Nobody receives it until an administrator turns it on** (or a migration names
+specific `login_id` values only).
 
 ## Do
 
