@@ -67,7 +67,7 @@ PERMISSION_CATALOG: list[dict] = [
     {"key": "traceability.packaging_shift", "label": "Packaging shift", "module": "packaging_shift", "section": "Applications", "parent": "traceability"},
     {
         "key": "traceability.walvis_dispatch",
-        "label": "Walvis Bay dispatch",
+        "label": "Walvis Bay Dispatch",
         "module": "walvis_dispatches",
         "section": "Applications",
         "parent": "traceability",
