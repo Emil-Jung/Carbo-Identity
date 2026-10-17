@@ -49,6 +49,18 @@ PERMISSION_CATALOG: list[dict] = [
     },
     {"key": "traceability.labels.print", "label": "Print Labels", "module": "print_labels", "section": "Applications", "parent": "traceability"},
     {"key": "traceability.labels.deployment", "label": "Label Fencing", "module": "label_deployment", "section": "Applications", "parent": "traceability"},
+    {
+        "key": "traceability.labels.inventory_report",
+        "label": "Label inventory",
+        "module": "label_inventory_report",
+        "section": "Reports & lookups",
+    },
+    {
+        "key": "traceability.labels.sms_warning_admin",
+        "label": "Label print warning (SMS)",
+        "module": "label_print_warning_admin",
+        "section": "Administration",
+    },
     {"key": "traceability.stock.view", "label": "Charcoal Intake", "module": "bags_movement_report", "section": "Applications", "parent": "traceability"},
     {"key": "traceability.containers", "label": "Containers", "module": "containers", "section": "Applications", "parent": "traceability"},
     {"key": "traceability.movement_jobs", "label": "Movement schedule", "module": "movement_schedule", "section": "Applications", "parent": "traceability"},
