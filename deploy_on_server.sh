@@ -36,12 +36,38 @@ unset DATABASE_URL
 
 echo ""
 echo "--- restart API ---"
+mkdir -p "$REPO_ROOT/logs"
+restart_ok=0
 if systemctl is-active --quiet carbo-identity 2>/dev/null; then
-  sudo systemctl restart carbo-identity
-  sleep 1
-  systemctl is-active carbo-identity && echo "carbo-identity: running"
-else
-  echo "WARN: carbo-identity service not running — enable with DEPLOY.md"
+  if sudo systemctl restart carbo-identity 2>/dev/null; then
+    sleep 1
+    if systemctl is-active --quiet carbo-identity; then
+      restart_ok=1
+      echo "carbo-identity: running (systemd)"
+    fi
+  fi
+fi
+if [[ "$restart_ok" -ne 1 ]]; then
+  if [[ ! -x "$REPO_ROOT/identity_api/.venv/bin/uvicorn" ]]; then
+    echo "ERROR: carbo-identity not running and identity_api/.venv/bin/uvicorn missing."
+    exit 1
+  fi
+  if command -v fuser >/dev/null 2>&1; then
+    fuser -k 8004/tcp 2>/dev/null || true
+    sleep 2
+  fi
+  echo "Starting API manually (systemd inactive or sudo restart unavailable)..."
+  cd "$REPO_ROOT/identity_api"
+  nohup .venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8004 >> "$REPO_ROOT/logs/uvicorn.log" 2>&1 &
+  sleep 2
+  if curl -sf http://127.0.0.1:8004/health >/dev/null; then
+    restart_ok=1
+    echo "carbo-identity: running (manual uvicorn — see logs/uvicorn.log)"
+  else
+    echo "ERROR: API did not start on port 8004. Last log lines:"
+    tail -30 "$REPO_ROOT/logs/uvicorn.log" 2>/dev/null || true
+    exit 1
+  fi
 fi
 
 echo ""
