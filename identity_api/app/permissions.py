@@ -63,6 +63,20 @@ PERMISSION_CATALOG: list[dict] = [
     },
     {"key": "traceability.stock.view", "label": "Charcoal Intake", "module": "bags_movement_report", "section": "Applications", "parent": "traceability"},
     {"key": "traceability.containers", "label": "Containers", "module": "containers", "section": "Applications", "parent": "traceability"},
+    {
+        "key": "traceability.containers.close_short",
+        "label": "Close container short",
+        "module": "containers",
+        "section": "Applications",
+        "parent": "traceability",
+    },
+    {
+        "key": "traceability.containers.short_close_authorise",
+        "label": "Authorise short container closure",
+        "module": "containers",
+        "section": "Applications",
+        "parent": "traceability",
+    },
     {"key": "traceability.movement_jobs", "label": "Movement schedule", "module": "movement_schedule", "section": "Applications", "parent": "traceability"},
     {"key": "traceability.packaging_shift", "label": "Packaging shift", "module": "packaging_shift", "section": "Applications", "parent": "traceability"},
     {
